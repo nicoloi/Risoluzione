@@ -7,7 +7,8 @@ import java.util.Set;
 
 /**
  * Questa classe senza costruttori contiene dei metodi che implementano
- * l'algoritmo di risoluzione nella logica proposizionale.
+ * l'algoritmo di risoluzione nella logica proposizionale per 
+ * un insieme di clausole.
  */
 public class Resolution {
 
@@ -45,27 +46,27 @@ public class Resolution {
 
                 Clause c2 = listCl.get(j);
 
-                if (!giaVisitato(c1, c2) && checkClause(c1, c2)) {
+                if (!giaVisitato(c1, c2) && checkClauses(c1, c2)) {
                     //imposta il gia visitato
                     Set<Clause> couple = new HashSet<>();
                     couple.add(c1);
                     couple.add(c2);
                     visited.put(couple, true);
 
-                    Clause newClause = resolStep(c1, c2);
+                    Clause newClause = resolRule(c1, c2);
 
                     //TODO TOGLI PRINT
                     System.out.println("NUOVA CLAUS: " + newClause);
 
                     /*
-                     * se la clausola risultante è vuota,
+                     * se la clausola risolvente è vuota,
                      * allora abbiamo trovato una contraddizione che 
                      * dimostra che l'insieme s non è soddisfacibile.
                      */
                     if (newClause.isEmpty()) return false;
 
-                    if (!listCl.contains(newClause)) {
-                        //TODO
+                    if (!listCl.contains(newClause) && validClause(newClause)) {
+                        //TODO togli il print
                         System.out.println("AGGIUNTA CLAUSOLA");
                         listCl.add(newClause); 
                     }
@@ -77,20 +78,21 @@ public class Resolution {
          * se dopo aver analizzato tutte le coppie di clausole in s,
          * non trovo la contraddizione, allora s risulta soddisfacibile
          */
-        return true; 
+        return true;
     }
 
     /**
      * 
      * Questo metodo controlla se due clausole hanno almeno un letterale
-     * in comune in cui uno è l'opposto dell'altro.
+     * in comune in cui uno è l'opposto dell'altro, così da poter svolgere
+     * la regola di risoluzione per le due clausole.
      * 
      * @param c1 la prima clausola.
      * @param c2 la seconda clausola.
      * @return true se c'è almeno un letterale complementare nelle clausole.
      *        
      */
-    private static boolean checkClause(Clause c1, Clause c2) {
+    private static boolean checkClauses(Clause c1, Clause c2) {
 
         if (c1.equals(c2)) return false;
 
@@ -127,11 +129,13 @@ public class Resolution {
 
 
     /**
+     * pre-condizioni: le due clausole c1 e c2 devono avere almeno un
+     *                 letterale complementare.
      * 
-     * Questo metodo implementa il passo dell'algoritmo di risoluzione,
+     * Questo metodo implementa la regola di risoluzione,
      * in cui si considerano due clausole di premessa, si cancellano 
      * i letterali complementari e si mettono insieme i letterali rimanenti, 
-     * formando così la clausola risultante.
+     * formando così la clausola risolvente.
      * 
      * @param c1 la prima clausola
      * @param c2 la seconda clausola
@@ -139,7 +143,7 @@ public class Resolution {
      *         due clausole e cancellando i letterali complementari
      *         presenti.
      */
-    private static Clause resolStep(Clause c1, Clause c2) {
+    private static Clause resolRule(Clause c1, Clause c2) {
         Clause result = new Clause();
         List<Literal> literals = new ArrayList<>();
         
@@ -151,6 +155,7 @@ public class Resolution {
             literals.add(l);
         }
         
+        int counter = 0;
         int i = 0;
 
         while (i < literals.size()) {
@@ -166,6 +171,12 @@ public class Resolution {
             }
 
             if (flag) {
+                counter++; //incremento il contatore per vedere se rimuovo più di una coppia di lett.
+
+                if (counter > 1) {
+                    break; 
+                }
+
                 literals.remove(l1);
                 literals.remove(l1.getOpposite());
                 i = 0; //ripeto la scansione della lista da capo
@@ -177,7 +188,25 @@ public class Resolution {
         for (Literal l : literals) {
             result.addLiteral(l);
         }
-
+        
         return result;
+    }
+
+    /**
+     * 
+     * @param resolvent la clausola risolvente da validare.
+     * @return true, se la clausola resolvent non contiene
+     *         letterali complementari. False altrimenti.
+     */
+    private static boolean validClause(Clause resolvent) {
+
+        for (Literal l1 : resolvent) {
+            for (Literal l2 : resolvent) {
+                if (l1.equals(l2.getOpposite()))
+                    return false;
+            }
+        }
+
+        return true;
     }
 }
