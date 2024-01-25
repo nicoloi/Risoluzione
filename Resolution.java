@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -21,13 +22,16 @@ public class Resolution {
 
     /**
      * Questo metodo statico implementa l'algoritmo di risoluzione per
-     * verificare se un insieme di clausole è soddisfacibile.
+     * verificare se un insieme di clausole è soddisfacibile o no.
+     * 
      * 
      * @param s l'insieme di clausole da considerare per l'algoritmo
-     * @return true, se s è soddisfacibile, false altrimenti.
+     * @return true - se s è soddisfacibile, false altrimenti.
+     * @throws NullPointerException se s è null.
      */
     public static boolean resolution(ClauseSet s) {
 
+        Objects.requireNonNull(s);
         if (s.isEmpty()) return false;
 
         visited = new HashMap<>();
@@ -46,17 +50,14 @@ public class Resolution {
 
                 Clause c2 = listCl.get(j);
 
-                if (!giaVisitato(c1, c2) && checkClauses(c1, c2)) {
-                    //imposta il gia visitato
+                if (!alreadyVisited(c1, c2) && checkClauses(c1, c2)) {
+                    //la coppia di clausole viene impostata come visitata
                     Set<Clause> couple = new HashSet<>();
                     couple.add(c1);
                     couple.add(c2);
                     visited.put(couple, true);
 
                     Clause newClause = resolRule(c1, c2);
-
-                    //TODO TOGLI PRINT
-                    System.out.println("NUOVA CLAUS: " + newClause);
 
                     /*
                      * se la clausola risolvente è vuota,
@@ -66,8 +67,6 @@ public class Resolution {
                     if (newClause.isEmpty()) return false;
 
                     if (!listCl.contains(newClause) && validClause(newClause)) {
-                        //TODO togli il print
-                        System.out.println("AGGIUNTA CLAUSOLA");
                         listCl.add(newClause); 
                     }
                 }
@@ -113,14 +112,12 @@ public class Resolution {
      *         confrontate in precedenza dal metodo resolution.
      *         false altrimenti.
      */
-    private static boolean giaVisitato(Clause c1, Clause c2) {
+    private static boolean alreadyVisited(Clause c1, Clause c2) {
         Set<Clause> couple = new HashSet<>();
         couple.add(c1);
         couple.add(c2);
 
         if (visited.containsKey(couple)) {
-            //TODO
-            System.out.printf("LA CLAUSOLA: %s E LA CAUSOLA: %s GIA' VISITATE\n", c1, c2);
             return visited.get(couple);
         }
 
@@ -129,19 +126,17 @@ public class Resolution {
 
 
     /**
-     * pre-condizioni: le due clausole c1 e c2 devono avere almeno un
-     *                 letterale complementare.
      * 
      * Questo metodo implementa la regola di risoluzione,
-     * in cui si considerano due clausole di premessa, si cancellano 
-     * i letterali complementari e si mettono insieme i letterali rimanenti, 
-     * formando così la clausola risolvente.
+     * in cui si considerano due clausole di premessa, si cancella una coppia
+     * di letterali complementari nelle due clausole e si mettono in congiunzione
+     * i letterali rimanenti, formando così la clausola risolvente.
      * 
      * @param c1 la prima clausola
      * @param c2 la seconda clausola
      * @return la clausola ottenuta mettendo in disgiunzione le
-     *         due clausole e cancellando i letterali complementari
-     *         presenti.
+     *         due clausole e cancellando una sola coppia di letterali
+     *         complementari presenti.
      */
     private static Clause resolRule(Clause c1, Clause c2) {
         Clause result = new Clause();
@@ -154,12 +149,8 @@ public class Resolution {
         for (Literal l : c2) {
             literals.add(l);
         }
-        
-        int counter = 0;
-        int i = 0;
 
-        while (i < literals.size()) {
-
+        for (int i = 0; i < literals.size(); i++) {
             Literal l1 = literals.get(i);
             boolean flag = false;
 
@@ -171,17 +162,9 @@ public class Resolution {
             }
 
             if (flag) {
-                counter++; //incremento il contatore per vedere se rimuovo più di una coppia di lett.
-
-                if (counter > 1) {
-                    break; 
-                }
-
                 literals.remove(l1);
                 literals.remove(l1.getOpposite());
-                i = 0; //ripeto la scansione della lista da capo
-            } else {
-                i++; //vado avanti nella scansione
+                break;
             }
         }
 
@@ -193,9 +176,12 @@ public class Resolution {
     }
 
     /**
+     * Questo metodo verifica se la clausola risolvente ottenuta con
+     * la regola di risoluzione contiene letterali complementari. Se questo
+     * fosse verificato allora la risolvente viene scartata.
      * 
      * @param resolvent la clausola risolvente da validare.
-     * @return true, se la clausola resolvent non contiene
+     * @return true - se la clausola resolvent non contiene
      *         letterali complementari. False altrimenti.
      */
     private static boolean validClause(Clause resolvent) {
@@ -206,7 +192,7 @@ public class Resolution {
                     return false;
             }
         }
-
+        
         return true;
     }
 }

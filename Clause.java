@@ -92,7 +92,7 @@ public class Clause implements Iterable<Literal> {
     @Override
     public String toString() {
         //la clausola vuota rappresenta la contraddizione, indicata con {} 
-        if (literals.isEmpty()) return "{}"; // ⊥
+        if (literals.isEmpty()) return "{}";
 
         String str = "";
         boolean first = true;

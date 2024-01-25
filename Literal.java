@@ -25,7 +25,7 @@ public abstract class Literal {
         if (name.equals("")) {
             throw new IllegalArgumentException("il nome non può essere vuoto");
         }
-
+        
         this.name = name;
     }
 
