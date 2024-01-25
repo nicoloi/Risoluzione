@@ -1,5 +1,12 @@
 import java.util.Scanner;
 
+/**
+ * Questa classe di test permette di testare il funzionamento del metodo di risoluzione.
+ * Il set di clausole da testare viene preso da standard input. Successivamente viene mostrato
+ * su standard output la rappresentazione testuale del set di clausole immesso in input (così da
+ * vedere se non sono stati fatti errori nell'input), ed infine viene mostrata una stringa che dice
+ * se il set è soddisfacibile o meno. 
+ */
 public class Test {
 
     public static void main(String[] args) {
