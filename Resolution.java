@@ -88,8 +88,6 @@ public class Resolution {
                         // for (int k : visited.keySet()) {
                         //     System.out.println("key: " + k + "    value: " + visited.get(k));
                         // }
-                        
-                        //TODO togli printtrace
                         printTrace();
 
                         return false;
@@ -110,7 +108,6 @@ public class Resolution {
         // }
 
         
-        //TODO togli chiamata a funzione printtrace
         printTrace();
 
         /*
