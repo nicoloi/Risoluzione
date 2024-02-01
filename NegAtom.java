@@ -22,21 +22,21 @@ public class NegAtom extends Literal{
         return new Atom(this.getName());
     }
 
+    private boolean equals(NegAtom natm) {
+        return this.getName().equals(natm.getName());
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NegAtom)) return false;
-
-        NegAtom a = (NegAtom)obj;
-
-        return this.getName().equals(a.getName());
+        return (obj instanceof NegAtom) && (this.equals( (NegAtom) obj ));
     }
 
     /**
      * @return una rappresentazione dell'atomo negato, dove il
-     *         simbolo not viene rappresentato con il carattere "!".
+     *         simbolo not viene rappresentato con il carattere "~".
      */
     @Override
     public String toString() {
-        return "!" + this.getName();
+        return "~" + this.getName();
     }
 }

@@ -13,26 +13,22 @@ import java.util.Set;
  */
 public class Resolution {
 
-    /*
-     * mappa che ha come chiave un insieme di due clausole,
-     * e come valore un booleano che viene impostato a true, 
-     * quando la coppia di clausole viene visitata dall'algoritmo di risoluzione.
-     */
-    private static Map<Set<Clause>, Boolean> visited;
+    private static Map<Integer, Set<Integer>> visited;
 
     /**
-     * Questo metodo statico implementa l'algoritmo di risoluzione per
-     * verificare se un insieme di clausole è soddisfacibile o no.
+     * Questo metodo statico verifica se un insieme di clausole 
+     * è soddisfacibile o no.
      * 
      * 
      * @param s l'insieme di clausole da considerare per l'algoritmo
      * @return true - se s è soddisfacibile, false altrimenti.
      * @throws NullPointerException se s è null.
+     * @throws IllegalArgumentException se s è vuoto.
      */
-    public static boolean resolution(ClauseSet s) {
+    public static boolean isSatisfiable(ClauseSet s) {
 
         Objects.requireNonNull(s);
-        if (s.isEmpty()) return false;
+        if (s.isEmpty()) throw new IllegalArgumentException("the clause set in input is empty");
 
         visited = new HashMap<>();
         List<Clause> listCl = new ArrayList<>(); 
@@ -46,32 +42,69 @@ public class Resolution {
 
             Clause c1 = listCl.get(i);
 
+            Set<Integer> valueSet = new HashSet<>();
+            visited.put(c1.getIndex(), valueSet);
+            
+
             for (int j = 0; j < listCl.size(); j++) {
 
                 Clause c2 = listCl.get(j);
 
-                if (!alreadyVisited(c1, c2) && checkClauses(c1, c2)) {
-                    //la coppia di clausole viene impostata come visitata
-                    Set<Clause> couple = new HashSet<>();
-                    couple.add(c1);
-                    couple.add(c2);
-                    visited.put(couple, true);
+                //TODO TOGLI IF
+                if (alreadyVisited(c1, c2)) {
+                    System.out.println("claus " + c1.getIndex() + " e claus: " + c2.getIndex() + " GIA VISITATE.");
+                }
 
-                    Clause newClause = resolRule(c1, c2);
+
+
+                //TODO finisci questo e poi controlla se è giusto. 
+                Literal complemLit = haveComplementaryLiterals(c1, c2);
+
+
+
+
+
+                if (complemLit != null && !alreadyVisited(c1, c2)) {
+                    //aggiungi l'indice di c2 al set delle clausole già visitate da c1
+                    valueSet.add(c2.getIndex());
+
+                    Clause newClause = resolRule(c1, c2, complemLit);
+
+                    //TODO togli il print
+                    System.out.println("NUOVA CLAUS: " + newClause + " CON INDICE: " + newClause.getIndex());
 
                     /*
                      * se la clausola risolvente è vuota,
                      * allora abbiamo trovato una contraddizione che 
                      * dimostra che l'insieme s non è soddisfacibile.
                      */
-                    if (newClause.isEmpty()) return false;
+                    if (newClause.isEmpty()) {
+                        //TODO togli la print della mappa visited
+                        for (int k : visited.keySet()) {
+                            System.out.println("key: " + k + "    value: " + visited.get(k));
+                        }
 
-                    if (!listCl.contains(newClause) && validClause(newClause)) {
+                        return false;
+                    } 
+
+                    //TODO TOGLI IF
+                    if (!isNotTautology(newClause))
+                        System.out.println("clausola " + newClause.getIndex() + " SCARTATA");
+
+                    if (!listCl.contains(newClause) && isNotTautology(newClause)) {
+                        //TODO TOGLI PRINT
+                        System.out.println("AGGIUNTA CLAUSOLA");
+
                         listCl.add(newClause); 
                     }
                 }
             }
         }
+
+        //TODO togli la print della mappa visited
+            for (int k : visited.keySet()) {
+                System.out.println("key: " + k + "    value: " + visited.get(k));
+            }
 
         /*
          * se dopo aver analizzato tutte le coppie di clausole in s,
@@ -81,7 +114,7 @@ public class Resolution {
     }
 
     /**
-     * 
+     *
      * Questo metodo controlla se due clausole hanno almeno un letterale
      * in comune in cui uno è l'opposto dell'altro, così da poter svolgere
      * la regola di risoluzione per le due clausole.
@@ -91,17 +124,21 @@ public class Resolution {
      * @return true se c'è almeno un letterale complementare nelle clausole.
      *        
      */
-    private static boolean checkClauses(Clause c1, Clause c2) {
+    private static Literal haveComplementaryLiterals(Clause c1, Clause c2) { 
 
-        if (c1.equals(c2)) return false;
+        if (c1.equals(c2)) return null; //la regola di risoluzione non deve applicarsi alla stessa clausola
 
+        return findComplementary(c1, c2);
+    }
+
+    private static Literal findComplementary(Clause c1, Clause c2) {
         for (Literal l1 : c1) {
-            for (Literal l2 : c2) {
-                if (l1.equals(l2.getOpposite())) return true;
+            for (Literal l2 : c2) { 
+                if (l1.equals(l2.getOpposite())) return l1;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -113,15 +150,15 @@ public class Resolution {
      *         false altrimenti.
      */
     private static boolean alreadyVisited(Clause c1, Clause c2) {
-        Set<Clause> couple = new HashSet<>();
-        couple.add(c1);
-        couple.add(c2);
+        int i1 = c1.getIndex();
+        int i2 = c2.getIndex();
 
-        if (visited.containsKey(couple)) {
-            return visited.get(couple);
+        if (visited.containsKey(i2)) {
+            //caso dove scambio c1 con c2
+            return (visited.get(i2)).contains(i1);
         }
 
-        return false;
+        return (visited.get(i1)).contains(i2);
     }
 
 
@@ -134,11 +171,12 @@ public class Resolution {
      * 
      * @param c1 la prima clausola
      * @param c2 la seconda clausola
+     * @param lit il letterale che deve essere eliminato dalla risolvente insieme
+     *            al suo complementare.
      * @return la clausola ottenuta mettendo in disgiunzione le
-     *         due clausole e cancellando una sola coppia di letterali
-     *         complementari presenti.
+     *         due clausole e cancellando la coppia di letterali lit e l'opposto di lit.
      */
-    private static Clause resolRule(Clause c1, Clause c2) {
+    private static Clause resolRule(Clause c1, Clause c2, Literal lit) {
         Clause result = new Clause();
         List<Literal> literals = new ArrayList<>();
         
@@ -150,23 +188,8 @@ public class Resolution {
             literals.add(l);
         }
 
-        for (int i = 0; i < literals.size(); i++) {
-            Literal l1 = literals.get(i);
-            boolean flag = false;
-
-            for (Literal l2 : literals) {
-                if (l1.equals(l2.getOpposite())) {
-                    flag = true;
-                    break;
-                }
-            }
-
-            if (flag) {
-                literals.remove(l1);
-                literals.remove(l1.getOpposite());
-                break;
-            }
-        }
+        literals.remove(lit);
+        literals.remove(lit.getOpposite());
 
         for (Literal l : literals) {
             result.addLiteral(l);
@@ -177,22 +200,14 @@ public class Resolution {
 
     /**
      * Questo metodo verifica se la clausola risolvente ottenuta con
-     * la regola di risoluzione contiene letterali complementari. Se questo
-     * fosse verificato allora la risolvente viene scartata.
+     * la regola di risoluzione non sia una tautologia.
      * 
-     * @param resolvent la clausola risolvente da validare.
-     * @return true - se la clausola resolvent non contiene
-     *         letterali complementari. False altrimenti.
+     * @param resolvent la clausola risolvente da verificare.
+     * @return true - se la clausola resolvent non è una tautologia
+     *         (cioè non contiene letterali complementari).
      */
-    private static boolean validClause(Clause resolvent) {
+    private static boolean isNotTautology(Clause resolvent) {
 
-        for (Literal l1 : resolvent) {
-            for (Literal l2 : resolvent) {
-                if (l1.equals(l2.getOpposite()))
-                    return false;
-            }
-        }
-        
-        return true;
+        return findComplementary(resolvent, resolvent) == null;
     }
 }

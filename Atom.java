@@ -23,13 +23,13 @@ public class Atom extends Literal {
         return new NegAtom(this.getName());
     }
 
+    private boolean equals(Atom atm) {
+        return this.getName().equals(atm.getName());
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Atom)) return false;
-
-        Atom a = (Atom)obj;
-
-        return this.getName().equals(a.getName());
+	    return (obj instanceof Atom) && (this.equals( (Atom) obj));
     }
 
     /**

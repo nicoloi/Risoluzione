@@ -9,17 +9,29 @@ import java.util.Objects;
  */
 public class Clause implements Iterable<Literal> {
 
+    //ATTRIBUTI STATICI
+    private static int count = 0;
+
     //ATTRIBUTI
     private Set<Literal> literals; //l'insieme che contiene i letterali della clausola.
-
+    private int index;
 
     //COSTRUTTORI
     public Clause() {
-        literals = new HashSet<>();
+        this.literals = new HashSet<>();
+        this.index = count;
+        count++;
     }
 
 
     //METODI
+
+    /**
+     * @return l'indice della clausola this.
+     */
+    public int getIndex() {
+        return index;
+    }
 
     /**
      * @return un iteratore che permette di iterare sui letterali della clausola
@@ -84,38 +96,29 @@ public class Clause implements Iterable<Literal> {
     }
 
     /**
-     * @return una rappresentazione testuale della clausola,
-     *         ad esempio: "l1 | l2 | l3"
-     *         dove la generica "l" rappresenta un letterale, e
-     *         il simbolo "|" indica la disgiunzione tra i letterali. 
+     * @return una rappresentazione testuale della clausola, mediante
+     *         rappresentazione insiemistica. ad esempio: "{a, b, ~c}"
      */
     @Override
     public String toString() {
-        //la clausola vuota rappresenta la contraddizione, indicata con {} 
-        if (literals.isEmpty()) return "{}";
+        if (this.isEmpty()) return "{}"; //la clausola vuota rappresenta la contraddizione.
 
-        String str = "";
-        boolean first = true;
+        StringBuilder res = new StringBuilder(literals.toString());
+        res.setCharAt(0, '{');
+        res.setCharAt(res.length() - 1, '}');
 
-        for (Literal l: literals) {
-            if (first) {
-                str += l.toString();
-            } else {
-                str += " | " + l.toString();
-            }
+        return res.toString();
+    }
 
-            first = false;
-        }
-
-        return str;
+    private boolean equals(Clause c) {
+        return this.literals.equals(c.literals);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Clause)) return false;
 
-        Clause c = (Clause)obj;
-        return this.literals.equals(c.literals);
+        return this.equals((Clause)obj);
     }
 
     @Override

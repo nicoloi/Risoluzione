@@ -82,27 +82,27 @@ public class ClauseSet implements Iterable<Clause> {
 
     /**
      * @return una rappresentazione testuale del set di clausole this,
-     *         dove le clausole del set vengono messe in congiunzione logica.
-     *         se ad esempio nel set sono presenti due clausole (l1 | l2) e (l3 | l4)
-     *         allora la stringa ritornata sarà: "(l1 | l2) & (l2 | l3)"
+     *         come insieme di clausole.
      */
     @Override
     public String toString() {
-        if (clauses.isEmpty()) return "empty set"; //restituisce l'insieme vuoto
+        if (this.isEmpty()) return "empty set"; //restituisce l'insieme vuoto
 
-        String res = "";
+        StringBuilder res = new StringBuilder();
         boolean first = true;
 
+        res.append("{ ");
         for (Clause c : clauses) {
             
             if (first) {
-                res += "(" + c.toString() + ")";
+                res.append(c.toString());
             } else {
-                res += "  &  " + "(" + c.toString() + ")";
+                res.append("; " + c.toString());
             }
 
             first = false;
         }
-        return res;
+        res.append(" }");
+        return res.toString();
     }
 }
