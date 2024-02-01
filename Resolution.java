@@ -14,6 +14,7 @@ import java.util.Set;
 public class Resolution {
 
     private static Map<Integer, Set<Integer>> visited;
+    private static List<Step> trace;
 
     /**
      * Questo metodo statico verifica se un insieme di clausole 
@@ -31,6 +32,7 @@ public class Resolution {
         if (s.isEmpty()) throw new IllegalArgumentException("the clause set in input is empty");
 
         visited = new HashMap<>();
+        trace = new ArrayList<>();
         List<Clause> listCl = new ArrayList<>(); 
 
         for (Clause c : s) {
@@ -51,13 +53,12 @@ public class Resolution {
                 Clause c2 = listCl.get(j);
 
                 //TODO TOGLI IF
-                if (alreadyVisited(c1, c2)) {
-                    System.out.println("claus " + c1.getIndex() + " e claus: " + c2.getIndex() + " GIA VISITATE.");
-                }
+                // if (alreadyVisited(c1, c2)) {
+                //     System.out.println("claus " + c1.getIndex() + " e claus: " + c2.getIndex() + " GIA VISITATE.");
+                // }
 
 
 
-                //TODO finisci questo e poi controlla se è giusto. 
                 Literal complemLit = haveComplementaryLiterals(c1, c2);
 
 
@@ -70,8 +71,12 @@ public class Resolution {
 
                     Clause newClause = resolRule(c1, c2, complemLit);
 
-                    //TODO togli il print
-                    System.out.println("NUOVA CLAUS: " + newClause + " CON INDICE: " + newClause.getIndex());
+
+                    //create a new step and insert the clauses and literal
+                    Step step = new Step(c1, c2, newClause, complemLit);
+                    trace.add(step);
+
+
 
                     /*
                      * se la clausola risolvente è vuota,
@@ -80,31 +85,33 @@ public class Resolution {
                      */
                     if (newClause.isEmpty()) {
                         //TODO togli la print della mappa visited
-                        for (int k : visited.keySet()) {
-                            System.out.println("key: " + k + "    value: " + visited.get(k));
-                        }
+                        // for (int k : visited.keySet()) {
+                        //     System.out.println("key: " + k + "    value: " + visited.get(k));
+                        // }
+                        
+                        //TODO togli printtrace
+                        printTrace();
 
                         return false;
                     } 
 
-                    //TODO TOGLI IF
-                    if (!isNotTautology(newClause))
-                        System.out.println("clausola " + newClause.getIndex() + " SCARTATA");
-
-                    if (!listCl.contains(newClause) && isNotTautology(newClause)) {
-                        //TODO TOGLI PRINT
-                        System.out.println("AGGIUNTA CLAUSOLA");
-
-                        listCl.add(newClause); 
+                    if (isTautology(newClause)) {
+                        step.setTautology();
+                    } else if (!listCl.contains(newClause)) {
+                        listCl.add(newClause);
                     }
                 }
             }
         }
 
         //TODO togli la print della mappa visited
-            for (int k : visited.keySet()) {
-                System.out.println("key: " + k + "    value: " + visited.get(k));
-            }
+        // for (int k : visited.keySet()) {
+        //     System.out.println("key: " + k + "    value: " + visited.get(k));
+        // }
+
+        
+        //TODO togli chiamata a funzione printtrace
+        printTrace();
 
         /*
          * se dopo aver analizzato tutte le coppie di clausole in s,
@@ -200,14 +207,21 @@ public class Resolution {
 
     /**
      * Questo metodo verifica se la clausola risolvente ottenuta con
-     * la regola di risoluzione non sia una tautologia.
+     * la regola di risoluzione è una tautologia.
      * 
      * @param resolvent la clausola risolvente da verificare.
-     * @return true - se la clausola resolvent non è una tautologia
+     * @return true - se la clausola resolvent è una tautologia
      *         (cioè non contiene letterali complementari).
      */
-    private static boolean isNotTautology(Clause resolvent) {
+    private static boolean isTautology(Clause resolvent) {
 
-        return findComplementary(resolvent, resolvent) == null;
+        return findComplementary(resolvent, resolvent) != null;
+    }
+
+
+    private static void printTrace() {
+        for (Step st : trace) {
+            System.out.println(st.toString());
+        }
     }
 }

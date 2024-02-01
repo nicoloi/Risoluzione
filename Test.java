@@ -39,14 +39,14 @@ public class Test {
 
         sc.close();
 
-        System.out.println("\nYour set in input:\n" + f);
+        System.out.println("\nYour set in input:\n" + f + "\n");
         
         boolean sodd = Resolution.isSatisfiable(f);
 
         if (sodd) {
-            System.out.println("\nSODDISFACIBILE\n");
+            System.out.println("\nSATISFIABLE");
         } else {
-            System.out.println("\nINSODDISFACIBILE\n");
+            System.out.println("\nUNSATISFIABLE");
         }
     }
 }
