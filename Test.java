@@ -11,11 +11,6 @@ public class Test {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        // System.out.println("inserisci una serie di clausole (una per ogni riga) con i letterali separati da spazi.");
-        // System.out.println("Il carattere '~' inserito prima di un letterale rappresenta la sua negazione");
-        // System.out.println("Per terminare inserisci il carattere '.' in una nuova riga\n");
-
         ClauseSet f = new ClauseSet();
 
         while (sc.hasNext()) {
@@ -39,9 +34,15 @@ public class Test {
 
         sc.close();
 
+
+        boolean enableSteps = false;
+        if (args.length != 0 && args[0].equals("trace")) {
+            enableSteps = true;
+        }
+
         System.out.println("\nYour set in input:\n" + f + "\n");
         
-        boolean sodd = Resolution.isSatisfiable(f);
+        boolean sodd = Resolution.isSatisfiable(f, enableSteps);
 
         if (sodd) {
             System.out.println("\nSATISFIABLE");

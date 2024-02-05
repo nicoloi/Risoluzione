@@ -11,7 +11,8 @@ public class Step {
     private Clause premise2;
     private Clause conclusion;
     private Literal complementary;
-    private boolean isTautology;
+    private boolean isTautology; //is true if the conclusion is a tautology
+    private boolean isAlreadyPresent; //is true if the conclusion is already present in the set. 
 
     //CONSTRUCTORS
     public Step(Clause premise1, Clause premise2, Clause conclusion, Literal complementary) {
@@ -22,23 +23,22 @@ public class Step {
 
         this.stepNumber = count;
         this.isTautology = false;
+        this.isAlreadyPresent = false;
         count++;
     }
 
     //METHODS
 
     public void setTautology() {
-        isTautology = true;
+        this.isTautology = true;
     }
 
-
+    public void setAlreadyPresent() {
+        this.isAlreadyPresent = true;
+    }
 
     @Override
     public String toString() {
-        //deve stampare il numero dello step corrente.
-        //deve stampare le due clausole di premessa e la clausola risolvente
-        //specificando qual è il letterale complementare nelle due clausole
-        //ed infine nel caso in cui la risolvente fosse una taut. deve dire che viene scartata.
         StringBuilder res = new StringBuilder();
 
         res.append("STEP NUMBER " + stepNumber + ":\n");
@@ -51,8 +51,11 @@ public class Step {
             res.append("The conclusion is DISCARDED because it is a tautology.\n");
         }
 
-        res.append("__________________________________________________________\n");
+        if (isAlreadyPresent) {
+            res.append("The conclusion is DISCARDED because it is already present in the set.\n");
+        }
 
+        res.append("__________________________________________________________\n");
 
         return res.toString();
     }

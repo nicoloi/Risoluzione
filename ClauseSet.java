@@ -91,7 +91,6 @@ public class ClauseSet implements Iterable<Clause> {
         StringBuilder res = new StringBuilder();
         boolean first = true;
 
-        res.append("{ ");
         for (Clause c : clauses) {
             
             if (first) {
@@ -102,7 +101,6 @@ public class ClauseSet implements Iterable<Clause> {
 
             first = false;
         }
-        res.append(" }");
         return res.toString();
     }
 }

@@ -22,11 +22,12 @@ public class Resolution {
      * 
      * 
      * @param s l'insieme di clausole da considerare per l'algoritmo
+     * @param enableSteps
      * @return true - se s è soddisfacibile, false altrimenti.
      * @throws NullPointerException se s è null.
      * @throws IllegalArgumentException se s è vuoto.
      */
-    public static boolean isSatisfiable(ClauseSet s) {
+    public static boolean isSatisfiable(ClauseSet s, boolean enableSteps) {
 
         Objects.requireNonNull(s);
         if (s.isEmpty()) throw new IllegalArgumentException("the clause set in input is empty");
@@ -47,68 +48,48 @@ public class Resolution {
             Set<Integer> valueSet = new HashSet<>();
             visited.put(c1.getIndex(), valueSet);
             
-
             for (int j = 0; j < listCl.size(); j++) {
 
                 Clause c2 = listCl.get(j);
 
-                //TODO TOGLI IF
-                // if (alreadyVisited(c1, c2)) {
-                //     System.out.println("claus " + c1.getIndex() + " e claus: " + c2.getIndex() + " GIA VISITATE.");
-                // }
+                if (!alreadyVisited(c1, c2)) {
 
+                    Literal complemLit = getComplementaryLiterals(c1, c2);
 
+                    if (complemLit != null) {
+                        //aggiungi l'indice di c2 al set delle clausole già visitate da c1
+                        valueSet.add(c2.getIndex());
 
-                Literal complemLit = haveComplementaryLiterals(c1, c2);
+                        Clause newClause = resolRule(c1, c2, complemLit);
 
+                        //create a new step and insert the clauses and literal
+                        Step step = new Step(c1, c2, newClause, complemLit);
+                        trace.add(step);
 
+                        /*
+                        * se la clausola risolvente è vuota,
+                        * allora abbiamo trovato una contraddizione che 
+                        * dimostra che l'insieme s non è soddisfacibile.
+                        */
+                        if (newClause.isEmpty()) {
+                            if (enableSteps) printTrace();
 
+                            return false;
+                        } 
 
-
-                if (complemLit != null && !alreadyVisited(c1, c2)) {
-                    //aggiungi l'indice di c2 al set delle clausole già visitate da c1
-                    valueSet.add(c2.getIndex());
-
-                    Clause newClause = resolRule(c1, c2, complemLit);
-
-
-                    //create a new step and insert the clauses and literal
-                    Step step = new Step(c1, c2, newClause, complemLit);
-                    trace.add(step);
-
-
-
-                    /*
-                     * se la clausola risolvente è vuota,
-                     * allora abbiamo trovato una contraddizione che 
-                     * dimostra che l'insieme s non è soddisfacibile.
-                     */
-                    if (newClause.isEmpty()) {
-                        //TODO togli la print della mappa visited
-                        // for (int k : visited.keySet()) {
-                        //     System.out.println("key: " + k + "    value: " + visited.get(k));
-                        // }
-                        printTrace();
-
-                        return false;
-                    } 
-
-                    if (isTautology(newClause)) {
-                        step.setTautology();
-                    } else if (!listCl.contains(newClause)) {
-                        listCl.add(newClause);
+                        if (isTautology(newClause)) {
+                            step.setTautology();
+                        } else if (listCl.contains(newClause)) {
+                            step.setAlreadyPresent();
+                        } else {
+                            listCl.add(newClause);
+                        }
                     }
                 }
             }
         }
 
-        //TODO togli la print della mappa visited
-        // for (int k : visited.keySet()) {
-        //     System.out.println("key: " + k + "    value: " + visited.get(k));
-        // }
-
-        
-        printTrace();
+        if (enableSteps) printTrace();
 
         /*
          * se dopo aver analizzato tutte le coppie di clausole in s,
@@ -128,7 +109,7 @@ public class Resolution {
      * @return true se c'è almeno un letterale complementare nelle clausole.
      *        
      */
-    private static Literal haveComplementaryLiterals(Clause c1, Clause c2) { 
+    private static Literal getComplementaryLiterals(Clause c1, Clause c2) { 
 
         if (c1.equals(c2)) return null; //la regola di risoluzione non deve applicarsi alla stessa clausola
 
@@ -211,10 +192,8 @@ public class Resolution {
      *         (cioè non contiene letterali complementari).
      */
     private static boolean isTautology(Clause resolvent) {
-
         return findComplementary(resolvent, resolvent) != null;
     }
-
 
     private static void printTrace() {
         for (Step st : trace) {

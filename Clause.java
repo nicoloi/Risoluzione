@@ -116,9 +116,7 @@ public class Clause implements Iterable<Literal> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Clause)) return false;
-
-        return this.equals((Clause)obj);
+        return (obj instanceof Clause) && (this.equals( (Clause)obj ));
     }
 
     @Override
