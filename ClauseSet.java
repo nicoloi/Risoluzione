@@ -4,37 +4,33 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- *  Questa classe permette di rappresentare una formula in 
- *  forma normale congiuntiva, tramite un insieme di clausole
- *  che verranno poi messe in congiunzione logica, formando così
- *  una congiunzione di clausole.
+ *  This class represents a formula in conjunctive normal form (CNF), 
+ *  using a set of clauses.
  */
 public class ClauseSet implements Iterable<Clause> {
 
-    //ATTRIBUTI
-    private Set<Clause> clauses; //l'insieme che contiene le clausole
+    //FIELDS
+    private Set<Clause> clauses; //the set containing the clauses
 
-    //COSTRUTTORI
+    //CONSTRUCTORS
+
     public ClauseSet() {
         clauses = new HashSet<>();
     }
 
-    //METODI
+    //METHODS
 
-    /**
-     * @return un iteratore che permette di iterare sulle clausole dell'oggetto this
-     */
     @Override
     public Iterator<Clause> iterator() {
         return clauses.iterator();
     }
 
     /**
-     * questo metodo aggiunge una nuova clausola a this. se la clausola
-     * è già presente, allora il metodo non fa niente.
+     * adds a new clause to this set. if the clause is already present, 
+     * the method does nothing.
      * 
-     * @param c la clausola da aggiungere a this
-     * @throws NullPointerException se il parametro c è null.
+     * @param c the clause to add to the set
+     * @throws NullPointerException if the clause is null.
      */
     public void addClause(Clause c) {
         Objects.requireNonNull(c);
@@ -42,11 +38,11 @@ public class ClauseSet implements Iterable<Clause> {
     }
 
     /**
-     * Questo metodo rimuove una clausola da this. Se la clausola
-     * non è presente in this, allora il metodo non fa niente.
+     * removes a clause from the set. 
+     * If the clause is not present in the set, the method does nothing.
      * 
-     * @param c la clausola da rimuovere
-     * @throws NullPointerException se il parametro c è null.
+     * @param c the clause to be removed
+     * @throws NullPointerException if the clause is null.
      */
     public void removeClause(Clause c) {
         Objects.requireNonNull(c);
@@ -55,7 +51,7 @@ public class ClauseSet implements Iterable<Clause> {
 
     /**
      * 
-     * @return il numero di clausole nel set this.
+     * @return the number of clauses in the set
      */
     public int size() {
         return clauses.size();
@@ -63,7 +59,7 @@ public class ClauseSet implements Iterable<Clause> {
 
     /**
      * 
-     * @return true, se this non contiene alcuna clausola.
+     * @return true, if the set does not contain any clauses.
      */
     public boolean isEmpty() {
         return clauses.isEmpty();
@@ -71,9 +67,9 @@ public class ClauseSet implements Iterable<Clause> {
 
     /**
      * 
-     * @param c la clausola che vogliamo controllare nel set di clausole this.
-     * @return true, se c è presente in this.
-     * @throws NullPointerException se il parametro c è null.
+     * @param c the clause we want to check in the this clause set.
+     * @return true, if c is present in the set.
+     * @throws NullPointerException if the clause c is null.
      */
     public boolean contains(Clause c) {
         Objects.requireNonNull(c);
@@ -81,12 +77,25 @@ public class ClauseSet implements Iterable<Clause> {
     }
 
     /**
-     * @return una rappresentazione testuale del set di clausole this,
-     *         come insieme di clausole.
+     * 
+     * @param index the index of clause that must be returned
+     * @return the clause witch have the index specified as a parameter
+     * @return null if the clause set doesn't contains the index.
      */
+    public Clause getByIndex(int index) {
+        for (Clause c : clauses) {
+            if (c.getIndex() == index) {
+                return c;
+            }
+        }
+
+        return null;
+    }
+
+    
     @Override
     public String toString() {
-        if (this.isEmpty()) return "empty set"; //restituisce l'insieme vuoto
+        if (this.isEmpty()) return "empty set";
 
         StringBuilder res = new StringBuilder();
         boolean first = true;

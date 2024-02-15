@@ -1,22 +1,22 @@
 
 /**
- * questa classe rappresenta un letterale dato da
- * un atomo non negato.
- * 
- * Gli oggetti istanziati da questa classe sono immutabili
+ * this class represents a literal that is a non-negated atom. 
+ * Objects instantiated by this class are immutable
  */
 public class Atom extends Literal {
 
-    //COSTRUTTORI
+    //CONSTRUCTORS
 
     /**
-     * @param name il nome dell'atomo
+     * @param name the name of the atom
+     * @throws NullPointerException if the "name" parameter is null
+     * @throws IllegalArgumentException if the "name" parameter is a empty string.
      */
     public Atom(String name) {
         super(name);
     }
     
-    //METODI
+    //METHODS
 
     @Override
     public Literal getOpposite() {
@@ -32,10 +32,7 @@ public class Atom extends Literal {
 	    return (obj instanceof Atom) && (this.equals( (Atom) obj));
     }
 
-    /**
-     * 
-     * @return una rappresentazione in stringa del letterale, mediante il suo nome
-     */
+
     @Override
     public String toString() {
         return this.getName();

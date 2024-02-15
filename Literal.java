@@ -1,23 +1,23 @@
 import java.util.Objects;
 
 /**
- * Questa classe astratta rappresenta un letterale nella logica proposizionale,
- * che può essere un atomo oppure un atomo negato.
+ * This abstract class represents a literal in propositional logic,
+ * which can be an atom or a negated atom.
  */
 public abstract class Literal {
 
-    //ATTRIBUTI
+    //FIELDS
     private final String name; //rappresenta il nome del letterale
 
-    //COSTRUTTORI
+    //CONSTRUCTORS
 
     /**
-     * @param name il nome del letterale
-     * @throws NullPointerException se il parametro name è null
-     * @throws IllegalArgumentException se il parametro name è una stringa vuota
+     * @param name the name of literal
+     * @throws NullPointerException if the "name" parameter is null
+     * @throws IllegalArgumentException if the "name" parameter is a empty string.
      * 
-     * questo costruttore serve alle sottoclassi per istanziare il letterale,
-     * con il nome che viene fornito come parametro.
+     * this constructor is used by the subclasses to instantiate the literal, 
+     * with the name given as a parameter.
      */
     protected Literal(String name) {
         Objects.requireNonNull(name);
@@ -29,19 +29,18 @@ public abstract class Literal {
         this.name = name;
     }
 
-    //METODI
+    //METHODS
     
     /**
-     * @return il nome del letterale.
+     * @return the name of this literal.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return l'opposto del letterale this. se il letterale è istanza
-     *         della classe Atom restituisce l'istanza NegAtom corrispondente,
-     *         e viceversa. 
+     * @return the opposite of the literal this. if the literal is an instance of the Atom class 
+     * it returns the corresponding NegAtom instance, and vice versa.
      */
     public abstract Literal getOpposite();
 

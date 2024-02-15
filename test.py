@@ -1,4 +1,11 @@
-#USA IL METODO FIND PER VEDERE SE è SODDISFACIBILE
+#  this script tests the resolution method on all txt files contained
+#  within the "test" directory. These files contain the clause sets to test. 
+#  The script separates the satisfiable clause sets from the unsatisfiable ones, 
+#  and checks whether the string "UNSATISFIABLE" does not appear in the output 
+#  of the satisfiable ones, while it must appear in the output of the 
+#  unsatisfiable ones. If one or more files fail the test, then the script 
+#  prints the list of txt files that failed the test.
+
 
 import os
 
@@ -16,7 +23,7 @@ for direc, subdir, files in os.walk('test'):
     for f in files:
         if f.startswith('sat'):
             out = get_output(f)
-            if out.find("UNSATISFIABLE") != -1: #if in the output we find the substring "UNSATISFIABLE"
+            if out.find("UNSATISFIABLE") != -1: #if we find the substring "UNSATISFIABLE" in the output
                 rejectedFiles.append(f)
         elif f.startswith('unsat'):
             out = get_output(f)
@@ -26,8 +33,7 @@ for direc, subdir, files in os.walk('test'):
 
 
 
-#se la lista dei file è vuota
-if not rejectedFiles:
+if not rejectedFiles: #if the list is empty
     print("Test PASSED successfully")
 else:
     for file in rejectedFiles:

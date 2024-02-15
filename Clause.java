@@ -4,19 +4,20 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * questa classe permette di istanziare una clausola, cioè una
- * disgiunzione di letterali, che possono essere negati o meno.
+ * this class represents a clause. a clause is a disjunction of literals, 
+ * which may or may not be negated.
  */
 public class Clause implements Iterable<Literal> {
 
-    //ATTRIBUTI STATICI
+    //STATIC FIELDS 
     private static int count = 0;
 
-    //ATTRIBUTI
-    private Set<Literal> literals; //l'insieme che contiene i letterali della clausola.
+    //FIELDS
+    private Set<Literal> literals; //the set containing the literals of the clause.
     private int index;
 
-    //COSTRUTTORI
+    //CONSTRUCTORS
+
     public Clause() {
         this.literals = new HashSet<>();
         this.index = count;
@@ -24,29 +25,26 @@ public class Clause implements Iterable<Literal> {
     }
 
 
-    //METODI
+    //METHODS
 
     /**
-     * @return l'indice della clausola this.
+     * @return the index of this clause.
      */
     public int getIndex() {
         return index;
     }
 
-    /**
-     * @return un iteratore che permette di iterare sui letterali della clausola
-     */
     @Override
     public Iterator<Literal> iterator() {
         return literals.iterator();
     }
 
     /**
-     * questo metodo aggiunge un nuovo letterale alla clausola this.
-     * se il letterale è già presente nella clausola this, allora non fa niente.
+     * this method adds a new literal to the clause. 
+     * if the literal is already present in the this clause, it does nothing.
      * 
-     * @param l il letterale da aggiungere alla clausola.
-     * @throws NullPointerException se il parametro l è null.
+     * @param l the literal to add to the clause.
+     * @throws NullPointerException if the parameter is null
      */
     public void addLiteral(Literal l) {
         Objects.requireNonNull(l);
@@ -55,11 +53,11 @@ public class Clause implements Iterable<Literal> {
     }
 
     /**
-     * questo metodo rimuove un letterale alla clausola this.
-     * se il letterale non è presente nella clausola this, allora non fa niente.
+     * this method removes a literal from the clause. 
+     * if the literal is not present in the clause, it does nothing.
      * 
-     * @param l il letterale da rimuovere dalla clausola.
-     * @throws NullPointerException se il parametro l è null.
+     * @param l the literal to be removed from the clause.
+     * @throws NullPointerException if the parameter is null.
      */
     public void removeLiteral(Literal l) {
         Objects.requireNonNull(l);
@@ -69,7 +67,7 @@ public class Clause implements Iterable<Literal> {
 
     /**
      * 
-     * @return il numero di letterali presenti nella clausola this.
+     * @return the number of literals in the clause.
      */
     public int size() {
         return literals.size();
@@ -77,7 +75,7 @@ public class Clause implements Iterable<Literal> {
 
     /**
      * 
-     * @return true se la clausola this è vuota
+     * @return true if the clause is empty.
      */
     public boolean isEmpty() {
         return literals.isEmpty();
@@ -85,9 +83,9 @@ public class Clause implements Iterable<Literal> {
 
     /**
      * 
-     * @param l il letterale che vogliamo controllare nella clausola
-     * @return true, se il letterale l è presente nella clausola this.
-     * @throws NullPointerException se il parametro l è null.
+     * @param l the literal we want to check in the clause
+     * @return true, if the literal is present in the clause.
+     * @throws NullPointerException if the literal is null.
      */
     public boolean contains(Literal l) {
         Objects.requireNonNull(l);
@@ -95,13 +93,10 @@ public class Clause implements Iterable<Literal> {
         return literals.contains(l);
     }
 
-    /**
-     * @return una rappresentazione testuale della clausola, mediante
-     *         rappresentazione insiemistica. ad esempio: "{a, b, ~c}"
-     */
+    
     @Override
     public String toString() {
-        if (this.isEmpty()) return "{}"; //la clausola vuota rappresenta la contraddizione.
+        if (this.isEmpty()) return "{}"; //the empty clause represents the contradiction.
 
         StringBuilder res = new StringBuilder(literals.toString());
         res.setCharAt(0, '{');

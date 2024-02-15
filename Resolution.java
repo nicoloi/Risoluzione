@@ -7,9 +7,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Questa classe senza costruttori contiene dei metodi che implementano
- * l'algoritmo di risoluzione nella logica proposizionale per 
- * un insieme di clausole.
+ * This class without constructors contains methods that implement 
+ * the resolution method in propositional logic for a set of clauses.
  */
 public class Resolution {
 
@@ -17,15 +16,17 @@ public class Resolution {
     private static List<Step> trace;
 
     /**
-     * Questo metodo statico verifica se un insieme di clausole 
-     * è soddisfacibile o no.
+     * This static method checks whether a set of clauses
+     * is satisfiable or not.
      * 
      * 
-     * @param s l'insieme di clausole da considerare per l'algoritmo
-     * @param enableSteps
-     * @return true - se s è soddisfacibile, false altrimenti.
-     * @throws NullPointerException se s è null.
-     * @throws IllegalArgumentException se s è vuoto.
+     * @param s the set of clauses to consider for the resolution method.
+     * @param enableSteps the boolean variable used to indicate whether 
+     *        or not to print the list of steps applied by the resolution method.
+     * 
+     * @return true, if s is satisfiable, false otherwise.
+     * @throws NullPointerException if s is null.
+     * @throws IllegalArgumentException if s is empty.
      */
     public static boolean isSatisfiable(ClauseSet s, boolean enableSteps) {
 
@@ -40,7 +41,6 @@ public class Resolution {
             listCl.add(c);
         }
 
-        //non posso usare foreach perchè la lista viene modificata
         for (int i = 0; i < listCl.size(); i++) {
 
             Clause c1 = listCl.get(i);
@@ -57,7 +57,7 @@ public class Resolution {
                     Literal complemLit = getComplementaryLiterals(c1, c2);
 
                     if (complemLit != null) {
-                        //aggiungi l'indice di c2 al set delle clausole già visitate da c1
+                        //adds the index of c2 to the set of clauses already visited by c1
                         valueSet.add(c2.getIndex());
 
                         Clause newClause = resolRule(c1, c2, complemLit);
@@ -67,9 +67,8 @@ public class Resolution {
                         trace.add(step);
 
                         /*
-                        * se la clausola risolvente è vuota,
-                        * allora abbiamo trovato una contraddizione che 
-                        * dimostra che l'insieme s non è soddisfacibile.
+                        * if the resolving clause is empty, then we have found a contradiction 
+                        * which proves that the set s is not satisfiable.
                         */
                         if (newClause.isEmpty()) {
                             if (enableSteps) printTrace();
@@ -92,30 +91,31 @@ public class Resolution {
         if (enableSteps) printTrace();
 
         /*
-         * se dopo aver analizzato tutte le coppie di clausole in s,
-         * non trovo la contraddizione, allora s risulta soddisfacibile
+         * if after analyzing all the pairs of clauses in s, 
+         * the contradiction is not found, then s is satisfiable
          */
         return true;
     }
 
     /**
      *
-     * Questo metodo controlla se due clausole hanno almeno un letterale
-     * in comune in cui uno è l'opposto dell'altro, così da poter svolgere
-     * la regola di risoluzione per le due clausole.
+     * This method checks whether two clauses have at least one literal in common
+     * where one is the opposite of the other, so that the resolution rule for the 
+     * two clauses can be executed.
      * 
-     * @param c1 la prima clausola.
-     * @param c2 la seconda clausola.
-     * @return true se c'è almeno un letterale complementare nelle clausole.
-     *        
+     * @param c1 the first clause
+     * @param c2 the second clause
+     * @return the literal in common, that is complementary in the two clauses.
+     * @return null, if the literal to search is not present.     
      */
     private static Literal getComplementaryLiterals(Clause c1, Clause c2) { 
 
-        if (c1.equals(c2)) return null; //la regola di risoluzione non deve applicarsi alla stessa clausola
+        if (c1.equals(c2)) return null; //the resolution rule need not apply to the same clause
 
         return findComplementary(c1, c2);
     }
 
+    //find the complementary literal.
     private static Literal findComplementary(Clause c1, Clause c2) {
         for (Literal l1 : c1) {
             for (Literal l2 : c2) { 
@@ -128,18 +128,17 @@ public class Resolution {
 
     /**
      * 
-     * @param c1 la prima clausola.
-     * @param c2 la seconda clausola.
-     * @return true se le due clausole c1 e c2 sono già state
-     *         confrontate in precedenza dal metodo resolution.
-     *         false altrimenti.
+     * @param c1 the first clause.
+     * @param c2 the second clause.
+     * @return true, if the two clauses c1 and c2 are already compared previously
+     *         by the resolution method. false otherwise.
      */
     private static boolean alreadyVisited(Clause c1, Clause c2) {
         int i1 = c1.getIndex();
         int i2 = c2.getIndex();
 
         if (visited.containsKey(i2)) {
-            //caso dove scambio c1 con c2
+            //case where switch c1 with c2.
             return (visited.get(i2)).contains(i1);
         }
 
@@ -149,17 +148,16 @@ public class Resolution {
 
     /**
      * 
-     * Questo metodo implementa la regola di risoluzione,
-     * in cui si considerano due clausole di premessa, si cancella una coppia
-     * di letterali complementari nelle due clausole e si mettono in congiunzione
-     * i letterali rimanenti, formando così la clausola risolvente.
+     * This method implements the resolution rule, in which two premise clauses are considered,
+     * a pair of complementary literals in the two clauses are deleted, 
+     * and the remaining literals are put into logical disjunction, 
+     * thus forming the resolving clause.
      * 
-     * @param c1 la prima clausola
-     * @param c2 la seconda clausola
-     * @param lit il letterale che deve essere eliminato dalla risolvente insieme
-     *            al suo complementare.
-     * @return la clausola ottenuta mettendo in disgiunzione le
-     *         due clausole e cancellando la coppia di letterali lit e l'opposto di lit.
+     * @param c1 the first clause.
+     * @param c2 the second clause.
+     * @param lit the literal that must be deleted, with its opposite. 
+     * @return the clause obtained by disjuncting the two clauses and 
+     *         deleting the pair of literals
      */
     private static Clause resolRule(Clause c1, Clause c2, Literal lit) {
         Clause result = new Clause();
@@ -184,17 +182,21 @@ public class Resolution {
     }
 
     /**
-     * Questo metodo verifica se la clausola risolvente ottenuta con
-     * la regola di risoluzione è una tautologia.
+     * This method checks whether the resolution clause 
+     * obtained with the resolution rule is a tautology.
      * 
-     * @param resolvent la clausola risolvente da verificare.
-     * @return true - se la clausola resolvent è una tautologia
-     *         (cioè non contiene letterali complementari).
+     * @param resolvent the clause to be checked.
+     * @return true, if the resolvent clause is a tautology 
+     *         (i.e. does not contain complementary literals).
+     *         false otherwise.
      */
     private static boolean isTautology(Clause resolvent) {
         return findComplementary(resolvent, resolvent) != null;
     }
 
+    /**
+     * prints the trace of the steps that have been performed by the resolution method.
+     */
     private static void printTrace() {
         for (Step st : trace) {
             System.out.println(st.toString());

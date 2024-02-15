@@ -1,20 +1,23 @@
 
-
+/**
+ * this class represents a resolution step, used to track how the resolution method works
+ */
 public class Step {
 
     //STATIC FIELDS
     private static int count = 1;
 
     //FIELDS
-    private int stepNumber;
+    private int stepNumber; //the number of this step.
     private Clause premise1;
     private Clause premise2;
     private Clause conclusion;
-    private Literal complementary;
+    private Literal complementary; //the literal used by the resolution step
     private boolean isTautology; //is true if the conclusion is a tautology
     private boolean isAlreadyPresent; //is true if the conclusion is already present in the set. 
 
     //CONSTRUCTORS
+
     public Step(Clause premise1, Clause premise2, Clause conclusion, Literal complementary) {
         this.premise1 = premise1;
         this.premise2 = premise2;
@@ -29,10 +32,17 @@ public class Step {
 
     //METHODS
 
+    /**
+     * use this method to indicate that the conclusion of the resolution step is a tautology
+     */
     public void setTautology() {
         this.isTautology = true;
     }
 
+    /**
+    * use this method to indicate that the conclusion is already present 
+    * in the set considered by the resolution method
+    */
     public void setAlreadyPresent() {
         this.isAlreadyPresent = true;
     }

@@ -1,22 +1,21 @@
 
 /**
- * questa classe rappresenta un letterale dato da
- * un atomo negato.
- * 
- * Gli oggetti istanziati da questa classe sono immutabili
+ * this class represents a literal that is a negated atom.
+ * Objects instantiated by this class are immutable
  */
 public class NegAtom extends Literal{
 
-    //COSTRUTTORI
+    //CONSTRUCTORS
 
     /**
-     * @param name il nome dell'atomo negato
+     * @param name the name of negated atom.
      */
     public NegAtom(String name) {
         super(name);
     }
     
-    //METODI
+    //METHODS
+
     @Override
     public Literal getOpposite() {
         return new Atom(this.getName());
@@ -31,10 +30,6 @@ public class NegAtom extends Literal{
         return (obj instanceof NegAtom) && (this.equals( (NegAtom) obj ));
     }
 
-    /**
-     * @return una rappresentazione dell'atomo negato, dove il
-     *         simbolo not viene rappresentato con il carattere "~".
-     */
     @Override
     public String toString() {
         return "~" + this.getName();
