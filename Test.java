@@ -1,15 +1,29 @@
 import java.util.Scanner;
 
 /**
- * Questa classe di test permette di testare il funzionamento del metodo di risoluzione.
- * Il set di clausole da testare viene preso da standard input. Successivamente viene mostrato
- * su standard output la rappresentazione testuale del set di clausole immesso in input (così da
- * vedere se non sono stati fatti errori nell'input), ed infine viene mostrata una stringa che dice
- * se il set è soddisfacibile o meno. 
+ * This class of tests is used to test the functioning of the resolution method 
+ * in a set of clauses or in formulas.
+ * The set of clauses to be tested is taken from standard input. Subsequently, 
+ * the textual representation of the set of clauses entered in the input is shown 
+ * on standard output, and finally a string is shown that says whether the set 
+ * is satisfiable or not. 
+ * if you write "trace" in the command line, the list of
+ * steps of the resolution method is printed on standard output.
+ * 
+ * if you write "formula" in the command line, then the test present
+ * in the TestFormula class is executed.
+ * In this case, the resolution method test is performed on some 
+ * already written formulas.
  */
 public class Test {
 
     public static void main(String[] args) {
+
+        if (args.length != 0 && args[0].equals("formula")) {
+            TestFormula.test();
+            return;
+        }
+
         Scanner sc = new Scanner(System.in);
         ClauseSet f = new ClauseSet();
 
