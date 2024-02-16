@@ -3,9 +3,7 @@ import java.util.List;
 
 /**
  * this test class is used to test the satisfiability of some formulas 
- * that have already been written. To do this, we need to convert the 
- * formulas into conjunctive normal form (CNF), and give the corresponding 
- * set of clauses as input to the resolution method to check its satisfiability.
+ * that have already been written. 
  * 
  * for each formula, the test method prints to stdout: 
  * - the input formula.

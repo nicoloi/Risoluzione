@@ -1,4 +1,10 @@
 
+/**
+ * This class without constructors is used to execute the resolution method
+ * for formulas. To do this, we need to convert the formulas into conjunctive
+ * normal form (CNF), and give the corresponding set of clauses as input
+ * to the resolution method to check its satisfiability.
+ */
 public class ResolutionFormula {
 
     //STATIC FIELDS
