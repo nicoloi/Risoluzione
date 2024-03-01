@@ -33,32 +33,44 @@ public class Resolution {
         Objects.requireNonNull(s);
         if (s.isEmpty()) throw new IllegalArgumentException("the clause set in input is empty");
 
+        s.removeTautologies();
+
+        if (s.isEmpty()) {
+            //in this case s contains only tautologies.
+            return true;
+        }
+
         visited = new HashMap<>();
         trace = new ArrayList<>();
         List<Clause> listCl = new ArrayList<>(); 
 
         for (Clause c : s) {
+            //initializes the map, with an empty set for each index of the clauses in s
+            visited.put(c.getIndex(), new HashSet<>());
             listCl.add(c);
         }
 
         for (int i = 0; i < listCl.size(); i++) {
 
             Clause c1 = listCl.get(i);
+            int index1 = c1.getIndex();
 
-            Set<Integer> valueSet = new HashSet<>();
-            visited.put(c1.getIndex(), valueSet);
-            
             for (int j = 0; j < listCl.size(); j++) {
 
                 Clause c2 = listCl.get(j);
+                int index2 = c2.getIndex();
 
-                if (!alreadyVisited(c1, c2)) {
+                if ((i != j) && !alreadyVisited(c1, c2)) {
 
                     Literal complemLit = getComplementaryLiterals(c1, c2);
 
                     if (complemLit != null) {
-                        //adds the index of c2 to the set of clauses already visited by c1
-                        valueSet.add(c2.getIndex());
+                        //adds the greater index to the set of indexes already visited by the lower index
+                        if (index1 < index2) {
+                            (visited.get(index1)).add(index2);
+                        } else {
+                            (visited.get(index2)).add(index1);
+                        }
 
                         Clause newClause = resolRule(c1, c2, complemLit);
 
@@ -68,19 +80,19 @@ public class Resolution {
 
                         /*
                         * if the resolving clause is empty, then we have found a contradiction 
-                        * which proves that the set s is not satisfiable.
+                        * which proves that the set s is unsatisfiable.
                         */
                         if (newClause.isEmpty()) {
                             if (enableSteps) printTrace();
-
                             return false;
                         } 
 
-                        if (isTautology(newClause)) {
+                        if (newClause.isTautology()) {
                             step.setTautology();
                         } else if (listCl.contains(newClause)) {
                             step.setAlreadyPresent();
                         } else {
+                            visited.put(newClause.getIndex(), new HashSet<>());
                             listCl.add(newClause);
                         }
                     }
@@ -109,14 +121,6 @@ public class Resolution {
      * @return null, if the literal to search is not present.     
      */
     private static Literal getComplementaryLiterals(Clause c1, Clause c2) { 
-
-        if (c1.equals(c2)) return null; //the resolution rule need not apply to the same clause
-
-        return findComplementary(c1, c2);
-    }
-
-    //find the complementary literal.
-    private static Literal findComplementary(Clause c1, Clause c2) {
         for (Literal l1 : c1) {
             for (Literal l2 : c2) { 
                 if (l1.equals(l2.getOpposite())) return l1;
@@ -137,12 +141,12 @@ public class Resolution {
         int i1 = c1.getIndex();
         int i2 = c2.getIndex();
 
-        if (visited.containsKey(i2)) {
-            //case where switch c1 with c2.
-            return (visited.get(i2)).contains(i1);
+        if (i1 < i2) {
+            return (visited.get(i1)).contains(i2);
         }
 
-        return (visited.get(i1)).contains(i2);
+        //case i1 > i2
+        return (visited.get(i2)).contains(i1);
     }
 
 
@@ -160,38 +164,12 @@ public class Resolution {
      *         deleting the pair of literals
      */
     private static Clause resolRule(Clause c1, Clause c2, Literal lit) {
-        Clause result = new Clause();
-        List<Literal> literals = new ArrayList<>();
-        
-        for (Literal l : c1) {
-            literals.add(l);
-        }
+        Clause result = Clause.union(c1, c2);
 
-        for (Literal l : c2) {
-            literals.add(l);
-        }
-
-        literals.remove(lit);
-        literals.remove(lit.getOpposite());
-
-        for (Literal l : literals) {
-            result.addLiteral(l);
-        }
+        result.remove(lit);
+        result.remove(lit.getOpposite());
         
         return result;
-    }
-
-    /**
-     * This method checks whether the resolution clause 
-     * obtained with the resolution rule is a tautology.
-     * 
-     * @param resolvent the clause to be checked.
-     * @return true, if the resolvent clause is a tautology 
-     *         (i.e. does not contain complementary literals).
-     *         false otherwise.
-     */
-    private static boolean isTautology(Clause resolvent) {
-        return findComplementary(resolvent, resolvent) != null;
     }
 
     /**

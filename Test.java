@@ -34,15 +34,15 @@ public class Test {
             for (String litName : literals) {
                 if (!litName.equals("")) {
                     if (litName.charAt(0) == '~') {
-                        c.addLiteral(new NegAtom(litName.substring(1)));
+                        c.add(new NegAtom(litName.substring(1)));
                     } else {
-                        c.addLiteral(new Atom(litName));
+                        c.add(new Atom(litName));
                     }
                 }
             }
 
             if (!c.isEmpty()) {
-                f.addClause(c);
+                f.add(c);
             }
         }
 

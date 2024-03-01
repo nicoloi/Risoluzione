@@ -28,7 +28,7 @@ public class AtomicFormula extends Formula {
      * 
      * @return the literal that represent this atomic formula.
      */
-    public Literal getLiteral() {
+    public Literal toLiteral() {
         return atm;
     }
 
@@ -46,8 +46,9 @@ public class AtomicFormula extends Formula {
         return this.getName();
     }
 
+
     @Override
-    public boolean isSatisfiable() {
-        return true; //an atomic formula is always satisfiable.
+    public ClauseSet toCnf() {
+        return new ClauseSet(new Clause(atm));
     }
 }

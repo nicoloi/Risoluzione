@@ -1,4 +1,5 @@
 import java.util.Set;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
@@ -18,12 +19,60 @@ public class Clause implements Iterable<Literal> {
 
     //CONSTRUCTORS
 
+    /**
+     * Constructs a new, empty clause.
+     */
     public Clause() {
         this.literals = new HashSet<>();
         this.index = count;
         count++;
     }
 
+    /**
+     * Constructs a new clause, containing the specified literal.
+     * 
+     * @param l the literal to be placed into the clause
+     * @throws NullPointerException - if l is null.
+     */
+    public Clause(Literal l) {
+        this();
+        
+        Objects.requireNonNull(l);
+        this.literals.add(l);
+    }
+
+    /**
+     * Constructs a new clause containing the literals in the specified list.
+     * 
+     * @param list the list of literals whose elements are to be placed
+     *             into this clause.
+     * @throws NullPointerException - if the specified list is null.
+     */
+    public Clause(List<Literal> list) {
+        this.literals = new HashSet<>(list);
+        this.index = count;
+        count++;
+    }
+
+    //STATIC METHODS
+
+    /**
+     * Unites the specified clauses. Use this method to avoid side effects
+     *   on specified clauses
+     * 
+     * @param c1 the first clause.
+     * @param c2 the second clause.
+     * @return the clause that represents the union of the specified clauses.
+     */
+    public static Clause union(Clause c1, Clause c2) {
+        Clause result = new Clause();
+
+        result.union(c1);
+        result.union(c2);
+
+        return result;
+    }
+    
 
     //METHODS
 
@@ -46,10 +95,10 @@ public class Clause implements Iterable<Literal> {
      * @param l the literal to add to the clause.
      * @throws NullPointerException if the parameter is null
      */
-    public void addLiteral(Literal l) {
+    public void add(Literal l) {
         Objects.requireNonNull(l);
 
-        literals.add(l);
+        this.literals.add(l);
     }
 
     /**
@@ -59,10 +108,10 @@ public class Clause implements Iterable<Literal> {
      * @param l the literal to be removed from the clause.
      * @throws NullPointerException if the parameter is null.
      */
-    public void removeLiteral(Literal l) {
+    public void remove(Literal l) {
         Objects.requireNonNull(l);
 
-        literals.remove(l);
+        this.literals.remove(l);
     }
 
     /**
@@ -70,15 +119,44 @@ public class Clause implements Iterable<Literal> {
      * @return the number of literals in the clause.
      */
     public int size() {
-        return literals.size();
+        return this.literals.size();
     }
+    
+    /**
+     *
+     * @return true, if the Clause is a tautology.
+     *         false, otherwise.
+     */
+    public boolean isTautology() {
+        for (Literal l1 : this.literals) {
+            for (Literal l2 : this.literals) { 
+                if (l1.equals(l2.getOpposite())) return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * unite this clause with the specified clause.
+     * 
+     * @param c the clause to be united with this clause.
+     */
+    public void union(Clause c) {
+        Objects.requireNonNull(c);
+
+        for (Literal l : c.literals) {
+            this.literals.add(l);
+        }
+    }
+
 
     /**
      * 
      * @return true if the clause is empty.
      */
     public boolean isEmpty() {
-        return literals.isEmpty();
+        return this.literals.isEmpty();
     }
 
     /**
@@ -90,7 +168,7 @@ public class Clause implements Iterable<Literal> {
     public boolean contains(Literal l) {
         Objects.requireNonNull(l);
         
-        return literals.contains(l);
+        return this.literals.contains(l);
     }
 
     
@@ -98,7 +176,7 @@ public class Clause implements Iterable<Literal> {
     public String toString() {
         if (this.isEmpty()) return "{}"; //the empty clause represents the contradiction.
 
-        StringBuilder res = new StringBuilder(literals.toString());
+        StringBuilder res = new StringBuilder(this.literals.toString());
         res.setCharAt(0, '{');
         res.setCharAt(res.length() - 1, '}');
 

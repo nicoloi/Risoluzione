@@ -7,7 +7,7 @@ import java.util.Objects;
 public abstract class Literal {
 
     //FIELDS
-    private final String name; //rappresenta il nome del letterale
+    private final String name;
 
     //CONSTRUCTORS
 
@@ -23,7 +23,7 @@ public abstract class Literal {
         Objects.requireNonNull(name);
 
         if (name.equals("")) {
-            throw new IllegalArgumentException("il nome non può essere vuoto");
+            throw new IllegalArgumentException("the name cannot be empty");
         }
         
         this.name = name;

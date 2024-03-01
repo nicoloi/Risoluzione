@@ -5,8 +5,9 @@
 public abstract class Formula {
     
     /**
+     * converts this formula to conjunctive normal form.
      * 
-     * @return true, if the formula this is satisfiable. False otherwise.
+     * @return the clauseset representing this formula converted to CNF.
      */
-    public abstract boolean isSatisfiable();
+    public abstract ClauseSet toCnf();
 }

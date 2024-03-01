@@ -13,60 +13,60 @@ import java.util.List;
 public class TestFormula {
     
     public static void test() {
-        
-        Connective AND = Connective.AND;
-        Connective OR = Connective.OR;
-        Connective NOT = Connective.NOT;
-        Connective IMPLIES = Connective.IMPLIES;
-        Connective IFF = Connective.IFF;
-        
-        
+
         Formula a = new AtomicFormula("a");
         Formula b = new AtomicFormula("b");
         Formula c = new AtomicFormula("c");
         Formula d = new AtomicFormula("d");
-        
-        CompoundFormula aANDb = new CompoundFormula(AND, a, b);             
-        CompoundFormula bANDc = new CompoundFormula(AND, b, c);
-        CompoundFormula notAandB = new CompoundFormula(NOT, aANDb, null);  
-        CompoundFormula impl = new CompoundFormula(IMPLIES, c, notAandB);
-        CompoundFormula f1 = new CompoundFormula(NOT, impl, null);        // ~(c -> ~(a & b))
+
+
+        CompoundFormula aANDb = new CompoundFormula(Connective.AND, a, b);             
+        CompoundFormula bANDc = new CompoundFormula(Connective.AND, b, c);
+        CompoundFormula notAandB = new CompoundFormula(Connective.NOT, aANDb);  
+        CompoundFormula impl = new CompoundFormula(Connective.IMPLIES, c, notAandB);
+        CompoundFormula f1 = new CompoundFormula(Connective.NOT, impl);        // ~(c -> ~(a & b))
 
         
-        CompoundFormula notD = new CompoundFormula(NOT, d, null);
-        CompoundFormula cOrNotD = new CompoundFormula(OR, c, notD);
-        CompoundFormula left = new CompoundFormula(IMPLIES, aANDb, cOrNotD);
-        CompoundFormula aORc = new CompoundFormula(OR, a, c);
-        CompoundFormula bIMPLd = new CompoundFormula(IMPLIES, b, d);
-        CompoundFormula notbIMPLd = new CompoundFormula(NOT, bIMPLd, null);
-        CompoundFormula right = new CompoundFormula(AND, aORc, notbIMPLd);
-        CompoundFormula f2 = new CompoundFormula(AND, left, right);
+        CompoundFormula notD = new CompoundFormula(Connective.NOT, d);
+        CompoundFormula cOrNotD = new CompoundFormula(Connective.OR, c, notD);
+        CompoundFormula left = new CompoundFormula(Connective.IMPLIES, aANDb, cOrNotD);
+        CompoundFormula aORc = new CompoundFormula(Connective.OR, a, c);
+        CompoundFormula bIMPLd = new CompoundFormula(Connective.IMPLIES, b, d);
+        CompoundFormula notbIMPLd = new CompoundFormula(Connective.NOT, bIMPLd);
+        CompoundFormula right = new CompoundFormula(Connective.AND, aORc, notbIMPLd);
+        CompoundFormula f2 = new CompoundFormula(Connective.AND, left, right);
         
         
-        CompoundFormula notC = new CompoundFormula(NOT, c, null);       
-        CompoundFormula aIMPLb = new CompoundFormula(IMPLIES, a, b);   
-        CompoundFormula notCIMPLb = new CompoundFormula(IMPLIES, notC, b);   
-        CompoundFormula f3 = new CompoundFormula(IMPLIES, aIMPLb, notCIMPLb); // (a -> b) -> (~c -> b)
+        CompoundFormula notC = new CompoundFormula(Connective.NOT, c);       
+        CompoundFormula aIMPLb = new CompoundFormula(Connective.IMPLIES, a, b);   
+        CompoundFormula notCIMPLb = new CompoundFormula(Connective.IMPLIES, notC, b);   
+        CompoundFormula f3 = new CompoundFormula(Connective.IMPLIES, aIMPLb, notCIMPLb); // (a -> b) -> (~c -> b)
 
         
-        CompoundFormula aORb = new CompoundFormula(OR, a, b);
-        CompoundFormula f4 = new CompoundFormula(IFF, aORb, bANDc); // (a | b) <-> (b & c)
+        CompoundFormula aORb = new CompoundFormula(Connective.OR, a, b);
+        CompoundFormula f4 = new CompoundFormula(Connective.IFF, aORb, bANDc); // (a | b) <-> (b & c)
         
 
-        CompoundFormula bIMPLc = new CompoundFormula(IMPLIES, b, c);
-        CompoundFormula bimplCANDa = new CompoundFormula(AND, bIMPLc, a);
-        CompoundFormula f5 = new CompoundFormula(OR, aANDb, bimplCANDa); // (a & b) | ((b -> c) & a)
+        CompoundFormula bIMPLc = new CompoundFormula(Connective.IMPLIES, b, c);
+        CompoundFormula bimplCANDa = new CompoundFormula(Connective.AND, bIMPLc, a);
+        CompoundFormula f5 = new CompoundFormula(Connective.OR, aANDb, bimplCANDa); // (a & b) | ((b -> c) & a)
+
+        CompoundFormula g1 = new CompoundFormula(Connective.NOT, aIMPLb);
+        CompoundFormula cANDd = new CompoundFormula(Connective.AND, c, d);
+        CompoundFormula g2 = new CompoundFormula(Connective.NOT, new CompoundFormula(Connective.NOT, cANDd));
+        CompoundFormula f6 = new CompoundFormula(Connective.NOT, new CompoundFormula(Connective.IFF, g1, g2));
+            // ~( ~(a -> b) <-> ~~(c & d) )
 
         
-        CompoundFormula impl2 = new CompoundFormula(IMPLIES, aANDb, cOrNotD);
-        CompoundFormula taut = new CompoundFormula(OR, impl2, a);  // ((a & b) -> (c | ~d)) | a
+        CompoundFormula impl2 = new CompoundFormula(Connective.IMPLIES, aANDb, cOrNotD);
+        CompoundFormula taut = new CompoundFormula(Connective.OR, impl2, a);  // ((a & b) -> (c | ~d)) | a
         
 
-        CompoundFormula unsat1 = new CompoundFormula(NOT, taut, null);  // ~(((a & b) -> (c | ~d)) | a)
+        CompoundFormula unsat1 = new CompoundFormula(Connective.NOT, taut);  // ~(((a & b) -> (c | ~d)) | a)
         
     
-        CompoundFormula notA = new CompoundFormula(NOT, a, null);             
-        CompoundFormula unsat2 = new CompoundFormula(AND, a, notA); // a & ~a
+        CompoundFormula notA = new CompoundFormula(Connective.NOT, a);             
+        CompoundFormula unsat2 = new CompoundFormula(Connective.AND, a, notA); // a & ~a
 
 
         List<Formula> formulas = new ArrayList<>();
@@ -75,6 +75,7 @@ public class TestFormula {
         formulas.add(f3);
         formulas.add(f4);
         formulas.add(f5);
+        formulas.add(f6);
         formulas.add(taut);
         formulas.add(unsat1);
         formulas.add(unsat2);
@@ -82,13 +83,14 @@ public class TestFormula {
         for (Formula f : formulas) {
             System.out.println("Your formula in input:");
             System.out.println(f);
-
-            ClauseSet cs = ResolutionFormula.getClauseSet(f);
+            
+            ClauseSet cnf = f.toCnf();
+            
             System.out.println("\nThe result clause set is:");
-            System.out.println(cs);
+            System.out.println(cnf);
             System.out.println();
 
-            if (Resolution.isSatisfiable(cs, false)) {
+            if (Resolution.isSatisfiable(cnf, false)) {
                 System.out.println("SATISFIABLE");
             } else {
                 System.out.println("UNSATISFIABLE");
